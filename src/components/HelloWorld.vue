@@ -1,41 +1,63 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
+
+    <v-text-field label="Type a GitHub User"></v-text-field>
+
     <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
+      <li  v-for="(repo,index) in info" :key="index">{{repo.name}}</li>
     </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'HelloWorld',
+
   props: {
     msg: String
-  }
+  },
+
+  data() {
+     return {
+      info : null,
+      languages: []
+     }
+   },
+
+  methods: {
+		getRepoLanguages() {
+      console.log(this.info)
+      for (let i = 0; i < this.reposName.length; i++) {
+        // const repoName = this.info[i].name;
+        // console.log(repoName)
+
+        // const repoName = this.reposName[i];
+        // console.log(this.reposName[i])
+        
+         axios
+          .get('https://api.github.com/repos/mefyl/'+this.reposName[i]+'/languages')
+          .then(response => (this.languages.push(response.data)))
+      }
+    },
+  },
+
+  mounted () {
+    axios
+      .get('https://api.github.com/users/mefyl/repos')
+      .then(response => (this.info = response.data))
+      .then(this.getRepoLanguages)
+  },
+
+  computed: {
+		reposName() {
+			let reposName = this.info.map(repo=>repo.name)
+			return reposName
+    }
+	}
 }
 </script>
 
@@ -47,10 +69,6 @@ h3 {
 ul {
   list-style-type: none;
   padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
 }
 a {
   color: #42b983;
