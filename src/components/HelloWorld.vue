@@ -62,7 +62,7 @@
             <p>Size : {{repo.size}} Bytes</p>
           </v-card-text>
 
-          <v-card-actions>   
+          <!-- <v-card-actions>   
             <v-spacer></v-spacer>
             <v-btn
               outlined
@@ -71,7 +71,7 @@
               @click="checkLanguage(repo.name)">
               Check languages
             </v-btn>
-          </v-card-actions>
+          </v-card-actions> -->
         </v-card>
       </li>
     </ul>
@@ -106,7 +106,7 @@ export default {
   methods: {
     submit(){
       axios
-        .get('https://api.github.com/users/'+this.user+'/repos?state=closed&access_token=605ed724b91dbe70d8bb5e594de76d401cbf535e')
+        .get('https://api.github.com/users/'+this.user+'/repos')
         .then(response => {
           this.repos = response.data
           this.userFound=true
@@ -125,14 +125,14 @@ export default {
 
     checkLanguage(repo){
       axios
-          .get('https://api.github.com/repos/'+this.user+'/'+repo+'/languages?state=closed&access_token=605ed724b91dbe70d8bb5e594de76d401cbf535e')
+          .get('https://api.github.com/repos/'+this.user+'/'+repo+'/languages')
           .then(response => (this.languages = response.data))
     },
 
 		getRepoLanguages() {
       for (let i = 0; i < this.repos.length; i++) {
          axios
-          .get('https://api.github.com/repos/'+this.user+'/'+this.repos[i].name+'/languages?state=closed&access_token=605ed724b91dbe70d8bb5e594de76d401cbf535e')
+          .get('https://api.github.com/repos/'+this.user+'/'+this.repos[i].name+'/languages')
           .then(response => (this.languages.push(response.data)))
       }
     },
